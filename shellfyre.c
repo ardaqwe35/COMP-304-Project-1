@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <errno.h>
+#define PATH_MAX 4096
 const char *sysname = "shellfyre";
 
 enum return_codes
@@ -360,7 +361,6 @@ int process_command(struct command_t *command)
 	}
 
 	// TODO: Implement your custom commands here
-
 	pid_t pid = fork();
 
 	if (pid == 0) // child
@@ -379,13 +379,25 @@ int process_command(struct command_t *command)
 		command->args[command->arg_count - 1] = NULL;
 
 		/// TODO: do your own exec with path resolving using execv()
-
+		char *paths = getenv("PATH");		
+		char *path = malloc(sizeof(char)*PATH_MAX);
+		char *tok = strtok(paths, ":");
+		while(tok != NULL) {
+		strcpy(path,tok);
+		strcat(path,"/");
+		strcat(path,command->args[0]);
+		execv(path, command->args);
+		path = (char *) realloc(path, sizeof(char)*PATH_MAX);
+		tok = strtok(NULL, ":");
+		}
+		free(path);
+		
 		exit(0);
 	}
 	else
 	{
 		/// TODO: Wait for child to finish if command is not running in background
-
+		if(!command->background) wait(NULL);
 		return SUCCESS;
 	}
 
