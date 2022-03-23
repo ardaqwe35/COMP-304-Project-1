@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <termios.h> //termios, TCSANOW, ECHO, ICANON
@@ -317,6 +318,35 @@ int prompt(struct command_t *command)
 
 int process_command(struct command_t *command);
 
+void filesearch(char* dir, char* search,char* rpath) {
+	char* newrpath = malloc(sizeof(char)*PATH_MAX);
+	strcpy(newrpath,rpath);
+	FILE *fp;
+	fp = popen("ls", "r");
+	char* path = malloc(sizeof(char)*PATH_MAX);
+	char* direc = malloc(sizeof(char)*PATH_MAX);
+	strcpy(path,dir);
+		while (fgets(direc, PATH_MAX, fp) != NULL) {
+			direc = strtok(direc,"\n");
+			if (strstr(direc,search)) {
+			!strlen(newrpath) ? printf("./%s\n",direc) : printf("./%s/%s\n",newrpath,direc);
+			}
+			strcpy(path,dir);
+			strcat(path,"/");
+			strcat(path,direc);
+			struct stat statbuf;
+   			stat(path, &statbuf);
+   				if(S_ISDIR(statbuf.st_mode)) {
+   					chdir(path);
+   					strcat(rpath,direc);
+   					filesearch(path,search,rpath);
+   				}
+
+		}
+	free(path);
+	free(direc);	
+}
+
 int main()
 {
 	while (1)
@@ -358,6 +388,45 @@ int process_command(struct command_t *command)
 				printf("-%s: %s: %s\n", sysname, command->name, strerror(errno));
 			return SUCCESS;
 		}
+	}
+	
+	if (strcmp(command->name, "filesearch") == 0) 
+	{
+		char path[4096];
+		char pwd[4096];
+		char backto[4096];
+		char *rpath = malloc(sizeof(char)*PATH_MAX);
+		char *p;
+		FILE *fp;
+		char* search = command->args[(command->arg_count)-1];
+		fp = popen("ls", "r");
+	
+		if (strcmp(command->args[0],"-r") == 0) {
+			FILE *fp2;
+			fp2 = popen("pwd","r");
+			char *dir = fgets(pwd,PATH_MAX,fp2);
+			dir = strtok(dir,"\n");
+			strcpy(backto,dir);
+			filesearch(dir, search,rpath);
+			chdir(backto);
+		}
+	
+		else if (strcmp(command->args[0],"-o") == 0) {
+
+			while (fgets(path, PATH_MAX, fp) != NULL) {
+				
+				if (strstr(path,search)) {
+					
+					//OPEN FILES??????
+					}
+				}
+			}
+		else {
+			while (fgets(path, PATH_MAX, fp) != NULL) {
+				if (strstr(path,search)) printf("./%s",path);
+			}
+		}
+	
 	}
 
 	// TODO: Implement your custom commands here
