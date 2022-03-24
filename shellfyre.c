@@ -428,16 +428,18 @@ int process_command(struct command_t *command)
 		}
 	
 	}
+	
 	if (strcmp(command->name, "joker") == 0) 
 	{
-	char **args = malloc(sizeof(char) * 400);
-	FILE *joketab;
-	joketab = fopen("joketab.txt", "w");
-	fprintf(joketab, "%s", "*/15 * * * * XDG_RUNTIME_DIR=/run/user/$(id -u) notify-send \"HEY A JOKE!\" \"$(curl --silent https://icanhazdadjoke.com/ | cat)\"\n");
-	fclose(joketab);
-	args[0] = "crontab";
-	args[1] = "joketab.txt";
-	execvp("crontab", args);
+		char **args = malloc(sizeof(char) * 400);
+		FILE *joketab;
+		joketab = fopen("joketab.txt", "w");
+		fprintf(joketab, "%s", "*/15 * * * * XDG_RUNTIME_DIR=/run/user/$(id -u) notify-send \"HEY A JOKE!\" \"$(curl --silent https://icanhazdadjoke.com/ | cat)\"\n");
+		fclose(joketab);
+		args[0] = "crontab";
+		args[1] = "joketab.txt";
+		execvp("crontab", args);
+	}
 	
 	if (strcmp(command->name, "take") == 0)
 	{
