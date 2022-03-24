@@ -439,7 +439,15 @@ int process_command(struct command_t *command)
 	args[1] = "joketab.txt";
 	execvp("crontab", args);
 	
-	
+	if (strcmp(command->name, "take") == 0)
+	{
+		char* take = command->args[0];
+		char* dir = strtok(take, "/");
+		while( dir != NULL ) {
+      			mkdir(dir, 0755); 
+      			chdir(dir);
+      			dir = strtok(NULL, "/");
+   		}
 	}
 
 	// TODO: Implement your custom commands here
