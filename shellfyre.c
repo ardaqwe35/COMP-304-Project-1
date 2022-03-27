@@ -373,6 +373,10 @@ int main()
 int process_command(struct command_t *command)
 {
 	int r;
+	//to reach path of the history file
+	char historyPath[PATH_MAX];
+	if(strlen(historyPath) == 0) realpath("history.txt", historyPath); 
+        		
 	if (strcmp(command->name, "") == 0)
 		return SUCCESS;
 
@@ -386,6 +390,18 @@ int process_command(struct command_t *command)
 			r = chdir(command->args[0]);
 			if (r == -1)
 				printf("-%s: %s: %s\n", sysname, command->name, strerror(errno));
+			
+			//modify for cdh command, push the directories into the dirs stack
+			char cwd[PATH_MAX];
+   			if (getcwd(cwd, sizeof(cwd)) != NULL) {
+   				strcat(cwd, "\n");
+       			FILE *fptr;
+				fptr = fopen(historyPath,"a");
+				fprintf(fptr,"%s", cwd);
+   				fclose(fptr);
+   			}
+   			
+			/*system("/bin/bash -c 'pushd . > /dev/null'"); push, popd and dirs commands does not work*/
 			return SUCCESS;
 		}
 	}
@@ -412,7 +428,7 @@ int process_command(struct command_t *command)
 		}
 	
 		if (strcmp(command->args[0],"-o") == 0) {
-			char xdg[10] = "xdg-open ";
+			char xdg[PATH_MAX] = "xdg-open ";
 			
 			while (fgets(path, PATH_MAX, fp) != NULL) {
 				if (strstr(path,search)) {
@@ -454,38 +470,52 @@ int process_command(struct command_t *command)
 	
 	if (strcmp(command->name, "cdh") == 0)
 	{
-		char* recentDirs[10];
-		int prevDirCount = 0;
+		int dirCount = 1;
+		char **prevDirs = malloc(sizeof(char *) * dirCount);
 		char dir[PATH_MAX];
+		char letter = 'a';
 		char selectedDir;
 		int selectedDirIndex;
+    		FILE* fp = fopen(historyPath, "r");
+    		
+		//Get previous directories
+    		while (fgets(dir, sizeof(dir), fp)) {
+    			dir[strcspn(dir, "\n")] = 0;
+        		prevDirs[dirCount - 1] = strdup(dir);
+			dirCount += 1;
+			prevDirs = (char **)realloc(prevDirs, sizeof(char *) * dirCount);
+    		}
+   		fclose(fp);
+   		
+   		if(dirCount == 1) {
+    			printf("There are no previous directories to select from.\n");
+    			return SUCCESS;
+   		}
+   		//print previous directories
+   		int iterate = dirCount < 10 ? dirCount - 2 : 10;
+		for(int i = iterate; 0 <= i; i--) {
+			printf("\n%c   %d)\t%s\n", letter, iterate - i, prevDirs[i]);
+			letter += 1;		
+   		}
 		
-		for(int i = 0; i < 10; i++) {
-			char letter = 'a' + i;
-			getcwd(dir, PATH_MAX);
-			if(strcmp(dir, "/") != 0) {
-				recentDirs[prevDirCount] = strdup(dir);
-				printf("%c\t%d)\t~%s\n", letter,i,recentDirs[prevDirCount]);
-				prevDirCount += 1;
-			}
-			//check if prev directory exists
-			if(chdir("..") != 0) {
-				printf("There are no previous directories to select from.");
-				
-			}
-				
-		}
-		printf("Select directory by letter or number: ");
+		//select and change directory
+		printf("\nSelect directory by letter or number: ");
 		scanf("%c", &selectedDir);
 		selectedDirIndex = (int)selectedDir;
-		//selected by letter
+		
+		//select by letter
 		if(selectedDirIndex < 107 && selectedDirIndex > 96) {
 			selectedDirIndex -= 97;
 		} else if (selectedDirIndex < 58 && selectedDirIndex > 47) {
-		//selected by number
+		//select by number
 			selectedDirIndex -= 48;
-		}
-		chdir(recentDirs[selectedDirIndex]);		
+		}	
+		
+		selectedDirIndex = iterate - selectedDirIndex;
+		chdir(prevDirs[selectedDirIndex]);
+		free(prevDirs);
+		return SUCCESS;
+		
 	}
 
 	// TODO: Implement your custom commands here
