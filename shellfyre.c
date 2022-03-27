@@ -411,16 +411,16 @@ int process_command(struct command_t *command)
 			chdir(backto);
 		}
 	
-		else if (strcmp(command->args[0],"-o") == 0) {
-
+		if (strcmp(command->args[0],"-o") == 0) {
+			char xdg[10] = "xdg-open ";
+			
 			while (fgets(path, PATH_MAX, fp) != NULL) {
-				
 				if (strstr(path,search)) {
-					
-					//OPEN FILES??????
-					}
+					strcat(xdg, path);
+					system(xdg);
 				}
 			}
+		}
 		else {
 			while (fgets(path, PATH_MAX, fp) != NULL) {
 				if (strstr(path,search)) printf("./%s",path);
@@ -450,6 +450,42 @@ int process_command(struct command_t *command)
       			chdir(dir);
       			dir = strtok(NULL, "/");
    		}
+	}
+	
+	if (strcmp(command->name, "cdh") == 0)
+	{
+		char* recentDirs[10];
+		int prevDirCount = 0;
+		char dir[PATH_MAX];
+		char selectedDir;
+		int selectedDirIndex;
+		
+		for(int i = 0; i < 10; i++) {
+			char letter = 'a' + i;
+			getcwd(dir, PATH_MAX);
+			if(strcmp(dir, "/") != 0) {
+				recentDirs[prevDirCount] = strdup(dir);
+				printf("%c\t%d)\t~%s\n", letter,i,recentDirs[prevDirCount]);
+				prevDirCount += 1;
+			}
+			//check if prev directory exists
+			if(chdir("..") != 0) {
+				printf("There are no previous directories to select from.");
+				
+			}
+				
+		}
+		printf("Select directory by letter or number: ");
+		scanf("%c", &selectedDir);
+		selectedDirIndex = (int)selectedDir;
+		//selected by letter
+		if(selectedDirIndex < 107 && selectedDirIndex > 96) {
+			selectedDirIndex -= 97;
+		} else if (selectedDirIndex < 58 && selectedDirIndex > 47) {
+		//selected by number
+			selectedDirIndex -= 48;
+		}
+		chdir(recentDirs[selectedDirIndex]);		
 	}
 
 	// TODO: Implement your custom commands here
