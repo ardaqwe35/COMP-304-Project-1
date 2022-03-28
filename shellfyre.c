@@ -517,6 +517,137 @@ int process_command(struct command_t *command)
 		return SUCCESS;
 		
 	}
+	
+	if (strcmp(command->name, "storyteller") == 0) {
+		printf("\n---------------------------------------------\nThis is a short, semi-interactive sci-fi story, written by me(arda) and inspired from the movie Oxygen. Enjoy!\n---------------------------------------------\n");
+		sleep(3);
+		printf("\nSelect an option when you are provided with the notation (N). \n Example: (1) How are you?\n");
+		char line[1024];
+		strcpy(line,"You woke up in a small, cryogenic unit.");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "You see that the oxygen levels are critical, below %30. It looks like thats why you are awake.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "You don’t know who you are, you don’t know where you are, you don’t know your name, you don’t remember anything.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "You call MILO, the AI of the cryogenic unit, to find out what is going on.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "You: MILO!\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "MILO: MILO is listening.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "7. You:\n(1). Who am I? (2). Where am I? (3). Why my oxygen levels are low? (4). Can you disable the locks, so I can leave the chamber?\n");
+		printf("%s",line);
+		char buf[256];
+		while(scanf("%s", buf)) {
+			int input = atoi(buf);
+			if (input == 1) {
+			printf("MILO: You are USER-237.\n");
+			}
+			else if (input == 2) {
+			printf("MILO: You are in a cryogenic unit.\n");
+			}
+			
+			else if (input == 3) {
+			printf("MILO: Your cryogenic unit is damaged. Unit’s oxygen generator is not working.\n");
+			}
+			
+			else if (input == 4) {
+			printf("MILO: No. You need root access to unlock the unit’s door.\n");
+			break;
+			}
+			
+			else {
+			printf("Choose a valid option.\n");
+			}
+		}
+		
+		strcpy(line, "You: Then give me the access.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "MILO: You need the root password.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "You: MILO, Search for USER-237 on the internet...\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "---For the next 15 minutes, you tried to understand what is going on, and tried to get some knowledge. You could not find anything.---\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "Then, finally, you find a number, related to the MILO project.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "Out of nowhere, an alarm starts to rang. Your oxygen levels are below %10\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "You call the number.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "Elizabeth opens the phone. After a long talk, you learn that you are a guinea pig for an experiment.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "Even though she strongly insists and advices you to not open the chamber, you beg her for the root password, since you are running out of oxygen, anyway.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "She finally gives the root password, just before the line disconnects.\n");
+		printf("%s",line);
+		sleep(3);
+		strcpy(line, "You have %4 percent oxygen left. With the root access, (1) you can now open the chamber, (2) look at the outside, or (3) try to maybe somehow fix the oxygen generator.\n");
+		printf("%s",line);
+		char buf2[256];
+		while(scanf("%s", buf)) {
+			int input = atoi(buf);
+			if (input == 1) {
+			printf("Elizabeth strongly suggested that you should not open the chamber. Are you sure? (1) Yes, (2) No\n");
+			while(scanf("%s", buf2)) {
+			int input2 = atoi(buf2);
+			if (input2 == 1) {
+				printf("You opened the chamber. As soon as you open it, the air inside the pot is sucked out. You feel like your lungs are collapsing. Just after, for a brief second, you find yourself in the middle of the space, and die a second after.\n");
+				sleep(3);
+				printf("THANKS FOR PLAYING!!\n GAME OVER!----PRESS CTRL+C to ABORT");
+				sleep(1000);
+			}
+			else if (input2 == 2) {
+			printf("You have %%4 percent oxygen left. With the root access, (1) you can now open the chamber, (2) look at the outside, or (3) try to maybe somehow fix the oxygen generator.\n");
+				break;
+			}
+			else {
+			printf("Choose a valid option.\n");
+			}
+			}
+			}
+			else if (input == 2) {
+			printf("MILO opens the windows, and you see that you are middle of the space, alone. You feel shocked, and go into a seizure. Until you can get yourself back together, oxygen levels are diminished. You start to not be able to breate. Slowly, you feel the sleep overwhelm you.\n");
+			sleep(3);
+			printf("You fell asleep, to never wake up again...\n");
+			sleep(3);
+			printf("THANKS FOR PLAYING!!\n");
+			printf("GAME OVER!----PRESS CTRL+C to ABORT\n");
+			}
+			
+			else if (input == 3) {
+			sleep(2);
+			printf("After some digging through MILO's documentations, you find out that you can put yourself back to a deep-sleep state. With only %%1 oxygen left, you successfully started the procedure. Without knowing anything, without knowing where and until when you are going, you go back to a deep sleep, to hopefully wake up alive.\n");
+			sleep(5);
+			printf("THANKS FOR PLAYING!!\n");
+			printf("GAME OVER!----PRESS CTRL+C to ABORT\n");
+			}
+			
+			else {
+			printf("Choose a valid option.\n");
+			}
+		}
+		
+		
+		
+		
+		
+	}
 
 	// TODO: Implement your custom commands here
 	pid_t pid = fork();
