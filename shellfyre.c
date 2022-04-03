@@ -8,6 +8,9 @@
 #include <stdbool.h>
 #include <errno.h>
 #define PATH_MAX 4096
+
+/* THIS PROJECT IS DONE BY THE TEAM ibb & obb, whose members are TOLGAY DÜLGER, 68881 and METİN ARDA ORAL, 69205. */
+
 const char *sysname = "shellfyre";
 
 enum return_codes
